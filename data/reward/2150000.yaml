@@ -1,0 +1,19 @@
+# Water Thief Monster (2150000)
+
+# bc.hidden-street.net suggests these should drop:
+#   Red Potion, Orange Potion, White Potion, Blue Potion, Arrow for Bow,
+#   Single Earring, Steel Fitted Mail (F), Brown Corporal (M), Double Tail Knuckler,
+#   and Water Thief's Bottle. https://bc.hidden-street.net/monster/water-thief-monster
+
+rewards:
+  - [ 0, 30, 45, 0.600000 ] # Copypasta from Jr. Necki (2130103)
+  - [ 2000000, 1, 1, 0.010000 ] # Red Potion
+  - [ 2000001, 1, 1, 0.010000 ] # Orange Potion
+  - [ 2000002, 1, 1, 0.010000 ] # White Potion
+  - [ 2000003, 1, 1, 0.010000 ] # Blue Potion
+  - [ 2060000, 10, 20, 0.008000 ] # Arrow for Bow
+  - [ 1032001, 1, 1, 0.000100 ] # Single Earring
+  - [ 1051000, 1, 1, 0.000100 ] # Steel Fitted Mail
+  - [ 1040037, 1, 1, 0.000100 ] # Brown Corporal
+  - [ 1482002, 1, 1, 0.000100 ] # Double Tail Knuckler
+  - [ 4000601, 1, 1, 0.400000 ] # Water Thief's Bottle
