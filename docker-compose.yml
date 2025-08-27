@@ -1,10 +1,15 @@
-version: "3"
+networks:
+  internal:
+    driver: bridge
+
 services:
   server:
     build: .
     depends_on:
       database:
         condition: service_healthy
+    networks:
+      - internal
     ports:
       - 8484:8484
       - 8585-8989:8585-8989
@@ -29,10 +34,10 @@ services:
       DEBUG_MODE: "true"
   database:
     image: cassandra:5.0.0-jammy
-    ports:
-      - 9042:9042
+    networks:
+      - internal
     healthcheck:
       test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 20
