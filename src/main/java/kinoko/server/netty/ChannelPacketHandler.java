@@ -10,6 +10,7 @@ import kinoko.handler.user.*;
 import kinoko.handler.user.item.CashItemHandler;
 import kinoko.handler.user.item.ItemHandler;
 import kinoko.handler.user.item.UpgradeItemHandler;
+import kinoko.handler.user.item.bridle.BridleItemHandler;
 import kinoko.server.header.InHeader;
 
 import java.lang.reflect.Method;
@@ -36,7 +37,8 @@ public final class ChannelPacketHandler extends PacketHandler {
             HitHandler.class,
             ItemHandler.class,
             CashItemHandler.class,
-            UpgradeItemHandler.class
+            UpgradeItemHandler.class,
+            BridleItemHandler.class
     );
 
     public ChannelPacketHandler() {

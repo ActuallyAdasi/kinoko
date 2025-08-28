@@ -116,7 +116,12 @@ public enum ItemInfoType {
     time,
 
     recoveryHP,
-    recoveryMP;
+    recoveryMP,
+
+    // For BridleItem use, e.g. catching mobs
+    mob,
+    create,
+    mobHP;
 
     private static final Map<String, ItemInfoType> nameMap;
 
