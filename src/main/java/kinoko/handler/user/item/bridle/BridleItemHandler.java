@@ -25,18 +25,20 @@ import kinoko.world.user.User;
 public abstract class BridleItemHandler {
     protected static final Logger log = LogManager.getLogger(BridleItemHandler.class);
 
+    /**
+     * Handle UserBridleItemUseRequest packets from clients. An example of such an item is 2270019: "Net".
+     *  "A net used for catching a Serpent that has been weakened. Double-click on it to catch a weakend Serpent."
+     * Removes the targetted mob, consumes the item, and adds the associated create item in the user's inventory if possible.
+     * Currently does not validate the used item's up/down/left/right info from wz data.
+     */
     @Handler(InHeader.UserBridleItemUseRequest)
     public static void handleUserBridleItemUseRequest(User user, InPacket inPacket) {
-        log.error("handleUserBridleItemUseRequest not implemented yet: {}, {}", user, inPacket);
-
-        // Not clear what update_time is.
-        // Position is the position of the used bridle item in the user's USE inventory
         // The item ID is the ID of the item, e.g. 2270019 for "Net", "A net used for catching a Serpent that has been weakened. Double-click on it to catch a weakend Serpent."
-        final int updateTime = inPacket.decodeInt(); // update_time (?)
-        final int position = inPacket.decodeShort(); // nPOS
-        final int itemId = inPacket.decodeInt(); // nItemID
-        final int mobFieldId = inPacket.decodeInt(); // oid from !info, for example
-        log.debug("Bridle Item Packet Details: updateTime: {}, position: {}, itemId: {}, mobFieldId: {}", updateTime, position, itemId, mobFieldId);
+        final int updateTime = inPacket.decodeInt(); // not relevant here as far as I'm aware
+        final int position = inPacket.decodeShort(); // position of the used item in the inventory
+        final int itemId = inPacket.decodeInt(); // ItemID of the used bridle item
+        final int mobFieldId = inPacket.decodeInt(); // ID of the targetted mob
+        log.debug("Handling UserBridleItemUseRequest packet: updateTime: {}, position: {}, itemId: {}, mobFieldId: {}", updateTime, position, itemId, mobFieldId);
 
         // More info for "Net" in the .wz file: info.mob=1150002,  info.tradeBlock=1,  info.notSale=1,  info.price=1,  info.create=4032751,  info.left=-100,  info.right=100,  info.top=-100,  info.bottom=50,  info.mobHP=40
         // You can see the .wz file includes the mob ID & the mob HP, I assume that's the max HP for catching the mob? But that's pretty low. I'd say it's percentage.
@@ -88,6 +90,8 @@ public abstract class BridleItemHandler {
         // Validate mob from field has HP below mob HP threshold
         final int mobMaxHP = mob.getMaxHp();
         // TODO: fix this calculation
+        log.debug("Handling UserBridleItemUseRequest calculation: mob.getHp(): {}, mobMaxHP: {}, maxHPForCatch: {}, (int) ((mob.getHp() / mobMaxHP) * 100): {}",
+            mob.getHp(), mobMaxHP, maxHPForCatch, (int) ((mob.getHp() / mobMaxHP) * 100));
         final boolean mobHealthLowEnough = (int) ((mob.getHp() / mobMaxHP) * 100) < maxHPForCatch;
         if (!mobHealthLowEnough) {
             user.write(MessagePacket.system("Lower your prey's HP to successfully capture!"));
