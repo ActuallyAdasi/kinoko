@@ -1,11 +1,30 @@
 package kinoko.server.command;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import kinoko.packet.user.DragonPacket;
 import kinoko.packet.user.UserLocal;
 import kinoko.packet.user.UserRemote;
 import kinoko.packet.world.MessagePacket;
 import kinoko.packet.world.WvsContext;
-import kinoko.provider.*;
+import kinoko.provider.ItemProvider;
+import kinoko.provider.MapProvider;
+import kinoko.provider.MobProvider;
+import kinoko.provider.NpcProvider;
+import kinoko.provider.QuestProvider;
+import kinoko.provider.ReactorProvider;
+import kinoko.provider.RewardProvider;
+import kinoko.provider.ShopProvider;
+import kinoko.provider.SkillProvider;
+import kinoko.provider.StringProvider;
 import kinoko.provider.item.ItemInfo;
 import kinoko.provider.map.Foothold;
 import kinoko.provider.map.MapInfo;
@@ -32,7 +51,11 @@ import kinoko.world.field.mob.Mob;
 import kinoko.world.field.mob.MobLeaveType;
 import kinoko.world.field.npc.Npc;
 import kinoko.world.field.reactor.Reactor;
-import kinoko.world.item.*;
+import kinoko.world.item.InventoryManager;
+import kinoko.world.item.InventoryOperation;
+import kinoko.world.item.InventoryType;
+import kinoko.world.item.Item;
+import kinoko.world.item.ItemVariationOption;
 import kinoko.world.job.Job;
 import kinoko.world.job.JobConstants;
 import kinoko.world.job.explorer.Beginner;
@@ -46,10 +69,13 @@ import kinoko.world.skill.SkillRecord;
 import kinoko.world.user.Dragon;
 import kinoko.world.user.User;
 import kinoko.world.user.effect.Effect;
-import kinoko.world.user.stat.*;
-
-import java.lang.reflect.Method;
-import java.util.*;
+import kinoko.world.user.stat.CalcDamage;
+import kinoko.world.user.stat.CharacterStat;
+import kinoko.world.user.stat.CharacterTemporaryStat;
+import kinoko.world.user.stat.SecondaryStat;
+import kinoko.world.user.stat.Stat;
+import kinoko.world.user.stat.TemporaryStatOption;
+import kinoko.world.user.stat.TwoStateTemporaryStat;
 
 public final class AdminCommands {
     @Command("test")

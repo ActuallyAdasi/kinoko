@@ -40,12 +40,18 @@ public abstract class BridleItemHandler {
         final int mobFieldId = inPacket.decodeInt(); // ID of the targetted mob
         log.debug("Handling UserBridleItemUseRequest packet: updateTime: {}, position: {}, itemId: {}, mobFieldId: {}", updateTime, position, itemId, mobFieldId);
 
-        // More info for "Net" in the .wz file: info.mob=1150002,  info.tradeBlock=1,  info.notSale=1,  info.price=1,  info.create=4032751,  info.left=-100,  info.right=100,  info.top=-100,  info.bottom=50,  info.mobHP=40
+        // More info for "Net" in the .wz file: info.mob=1150002, info.tradeBlock=1, info.notSale=1, info.price=1, info.create=4032751,
+        //  info.left=-100, info.right=100, info.top=-100, info.bottom=50, info.mobHP=40
         // You can see the .wz file includes the mob ID & the mob HP, I assume that's the max HP for catching the mob? But that's pretty low. I'd say it's percentage.
         // So, we need to check the mob (maybe more detail in the packet?), and make sure the health is below 40%.
         // NOTE: when used near a different mob, the client doesn't send the server a UserBridleItemUseRequest, the client complains no tameable monster nearby.
         // *If it is, AND if the user has sufficient capacity, remove the item from user inventory, kill the mob (play some "catch!" animation), and add the caught mob item to user inventory.*
         // (Live Serpent: 4032751, which is what we get in info.create!)
+
+        // Another example is Element Rock (2270002):
+        // info.mob=9300157, info.tradeBlock=1, info.notSale=1, info.price=1, info.create=4031868,
+        //  info.left=-70, info.right=70, info.top=-100, info.bottom=20, info.mobHP=40,
+        //  info.bridleMsgType=2, info.bridleProp=50, info.bridlePropChg=1.2, info.useDelay=800
 
         // Get Mob from Field, exit early if we can't get it
         final Field field = user.getField();
@@ -89,10 +95,9 @@ public abstract class BridleItemHandler {
 
         // Validate mob from field has HP below mob HP threshold
         final int mobMaxHP = mob.getMaxHp();
-        // TODO: fix this calculation
-        log.debug("Handling UserBridleItemUseRequest calculation: mob.getHp(): {}, mobMaxHP: {}, maxHPForCatch: {}, (int) ((mob.getHp() / mobMaxHP) * 100): {}",
-            mob.getHp(), mobMaxHP, maxHPForCatch, (int) ((mob.getHp() / mobMaxHP) * 100));
-        final boolean mobHealthLowEnough = (int) ((mob.getHp() / mobMaxHP) * 100) < maxHPForCatch;
+        log.debug("Handling UserBridleItemUseRequest calculation: mob.getHp(): {}, mobMaxHP: {}, maxHPForCatch: {},(int) (mob.getHp() * 100 / mobMaxHP): {}",
+            mob.getHp(), mobMaxHP, maxHPForCatch, (int) (mob.getHp() * 100 / mobMaxHP));
+        final boolean mobHealthLowEnough = (int) (mob.getHp() * 100 / mobMaxHP) < maxHPForCatch;
         if (!mobHealthLowEnough) {
             user.write(MessagePacket.system("Lower your prey's HP to successfully capture!"));
             user.dispose();

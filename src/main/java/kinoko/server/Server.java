@@ -1,7 +1,23 @@
 package kinoko.server;
 
+import java.time.Duration;
+import java.time.Instant;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import kinoko.database.DatabaseManager;
-import kinoko.provider.*;
+import kinoko.provider.EtcProvider;
+import kinoko.provider.ItemProvider;
+import kinoko.provider.MapProvider;
+import kinoko.provider.MobProvider;
+import kinoko.provider.NpcProvider;
+import kinoko.provider.QuestProvider;
+import kinoko.provider.ReactorProvider;
+import kinoko.provider.RewardProvider;
+import kinoko.provider.ShopProvider;
+import kinoko.provider.SkillProvider;
+import kinoko.provider.StringProvider;
 import kinoko.script.common.ScriptDispatcher;
 import kinoko.server.cashshop.CashShop;
 import kinoko.server.command.CommandProcessor;
@@ -11,11 +27,6 @@ import kinoko.server.node.LoginServerNode;
 import kinoko.server.node.ServerExecutor;
 import kinoko.server.rank.RankManager;
 import kinoko.util.crypto.MapleCrypto;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.time.Duration;
-import java.time.Instant;
 
 public final class Server {
     private static final Logger log = LogManager.getLogger(Server.class);
@@ -28,6 +39,7 @@ public final class Server {
     private static void initialize() throws Exception {
         // Initialize providers
         Instant start = Instant.now();
+        log.info("Initializing server ...");
         ItemProvider.initialize();      // Character.wz + Item.wz
         SkillProvider.initialize();     // Skill.wz + Morph.wz
         MapProvider.initialize();       // Map.wz
