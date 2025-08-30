@@ -1,5 +1,15 @@
 package kinoko.handler.stage;
 
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import kinoko.database.DatabaseManager;
 import kinoko.handler.Handler;
 import kinoko.packet.stage.LoginPacket;
@@ -18,7 +28,11 @@ import kinoko.server.node.Client;
 import kinoko.server.node.LoginServerNode;
 import kinoko.server.packet.InPacket;
 import kinoko.world.GameConstants;
-import kinoko.world.item.*;
+import kinoko.world.item.BodyPart;
+import kinoko.world.item.Inventory;
+import kinoko.world.item.InventoryManager;
+import kinoko.world.item.Item;
+import kinoko.world.item.ItemConstants;
 import kinoko.world.job.Job;
 import kinoko.world.job.RaceSelect;
 import kinoko.world.quest.QuestManager;
@@ -27,19 +41,15 @@ import kinoko.world.skill.SkillRecord;
 import kinoko.world.user.Account;
 import kinoko.world.user.AvatarData;
 import kinoko.world.user.CharacterData;
-import kinoko.world.user.data.*;
+import kinoko.world.user.data.ConfigManager;
+import kinoko.world.user.data.CoupleRecord;
+import kinoko.world.user.data.MapTransferInfo;
+import kinoko.world.user.data.MiniGameRecord;
+import kinoko.world.user.data.PopularityRecord;
+import kinoko.world.user.data.WildHunterInfo;
 import kinoko.world.user.stat.CharacterStat;
 import kinoko.world.user.stat.ExtendSp;
 import kinoko.world.user.stat.StatConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.time.Instant;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class LoginHandler {
     private static final Logger log = LogManager.getLogger(LoginHandler.class);
@@ -397,6 +407,7 @@ public final class LoginHandler {
 
     @Handler(InHeader.CheckSPWRequest)
     public static void handleCheckSpwRequest(Client c, InPacket inPacket) {
+        log.debug("Checking Secondary PW, as requested by client.");
         final String secondaryPassword = inPacket.decodeString(); // sSPW
         final int characterId = inPacket.decodeInt(); // dwCharacterID
         final String macAddress = inPacket.decodeString(); // CLogin::GetLocalMacAddress
@@ -405,13 +416,16 @@ public final class LoginHandler {
         final Account account = c.getAccount();
         if (account == null || !account.canSelectCharacter(characterId) || !c.getServerNode().isConnected(account) ||
                 !account.hasSecondaryPassword()) {
+            log.debug("Returning unknown FAILURE for Secondary PW check.");
             c.write(LoginPacket.selectCharacterResultFail(LoginResultType.Unknown));
             return;
         }
         if (!DatabaseManager.accountAccessor().checkPassword(account, secondaryPassword, true)) {
+            log.debug("Returning LoginPacket.checkSecondaryPasswordResult().");
             c.write(LoginPacket.checkSecondaryPasswordResult());
             return;
         }
+        log.debug("Handling Migration, whatever THAT means...");
         handleMigration(c, account, characterId);
     }
 
@@ -449,6 +463,7 @@ public final class LoginHandler {
                 return;
             }
             final TransferInfo transferInfo = transferResult.get();
+            log.error("Writing CharecterResultSuccess for migration for character ID: {}", characterId);
             c.write(LoginPacket.selectCharacterResultSuccess(transferInfo.getChannelHost(), transferInfo.getChannelPort(), characterId));
         });
     }
