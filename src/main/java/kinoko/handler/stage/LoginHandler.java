@@ -463,7 +463,9 @@ public final class LoginHandler {
                 return;
             }
             final TransferInfo transferInfo = transferResult.get();
-            log.error("Writing CharecterResultSuccess for migration for character ID: {}, transferInfo: {}", characterId, transferInfo);
+            log.error(
+                "Writing CharecterResultSuccess for migration for character ID: {}, transferInfo.getChannelHost(): {}, transferInfo.getChannelPort(): {}",
+                characterId, transferInfo.getChannelHost(), transferInfo.getChannelPort());
             c.write(LoginPacket.selectCharacterResultSuccess(transferInfo.getChannelHost(), transferInfo.getChannelPort(), characterId));
         });
     }
