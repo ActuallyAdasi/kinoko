@@ -425,7 +425,7 @@ public final class LoginHandler {
             c.write(LoginPacket.checkSecondaryPasswordResult());
             return;
         }
-        log.debug("Handling Migration, whatever THAT means...");
+        log.debug("Handling Migration to target channel server.");
         handleMigration(c, account, characterId);
     }
 
@@ -463,7 +463,7 @@ public final class LoginHandler {
                 return;
             }
             final TransferInfo transferInfo = transferResult.get();
-            log.error("Writing CharecterResultSuccess for migration for character ID: {}", characterId);
+            log.error("Writing CharecterResultSuccess for migration for character ID: {}, transferInfo: {}", characterId, transferInfo);
             c.write(LoginPacket.selectCharacterResultSuccess(transferInfo.getChannelHost(), transferInfo.getChannelPort(), characterId));
         });
     }
