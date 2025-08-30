@@ -11,8 +11,12 @@ services:
     networks:
       - internal
     ports:
-      - 8484:8484
-      - 8585-8989:8585-8989
+      # 8282 is the central (world) server, but we don't need to expose that. Clients interact w/ login and channel servers
+      - 8484:8484 # Login server
+      # - 8585-8604:8585-8604 # 8585-8604 are for Channels 1-20 on World 1, but we just use 5 channels right now
+      - 8585-8589:8585-8589 # 8585-8589 are for Channels 1-5 on World 1
+      # - 8685-8689:8685-8689 # 8685-8689 could be for Channels 1-5 on World 2 if we implemented multiple worlds
+
     volumes:
       - ./data:/kinoko/data
       - ./wz:/kinoko/wz
